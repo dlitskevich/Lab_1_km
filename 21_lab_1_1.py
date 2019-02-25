@@ -1,12 +1,17 @@
 import sys
 
-fibonacci_dict = {
-    0: 0,
-    1: 1
 
-}
+def memoize(f):
+    memo = {}
+
+    def helper(x):
+        if x not in memo:
+            memo[x] = f(x)
+        return memo[x]
+    return helper
 
 
+@memoize
 def fibonacci(member_order):
     """ Computes n-th fibonacci number
 
@@ -16,11 +21,11 @@ def fibonacci(member_order):
         Returns:
         n-th fibonacci number
     """
-    if member_order in fibonacci_dict:
-        return fibonacci_dict[member_order]
+
+    if member_order in (1, 2):
+        return 1
     else:
-        fibonacci_dict[member_order] = fibonacci(member_order - 1) + fibonacci(member_order - 2)
-        return fibonacci_dict[member_order]
+        return fibonacci(member_order - 1) + fibonacci(member_order - 2)
 
 
 if __name__ == "__main__":
@@ -30,4 +35,4 @@ if __name__ == "__main__":
         fibonacci_order = int(input("Input fibonacci order "))
 
     print(fibonacci(fibonacci_order))
-    print(fibonacci_dict)
+    print(fibonacci(fibonacci_order))
