@@ -39,6 +39,6 @@ if __name__ == "__main__":
     if len(sys.argv) >= 2:
         number = int(sys.argv[1])
     else:
-        number = int(input("Input number "))
+        number = int(input("Input number: "))
 
     print(simple_factors(number))
