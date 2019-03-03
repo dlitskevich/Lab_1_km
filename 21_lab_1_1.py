@@ -1,17 +1,19 @@
 import sys
 
 
-def memoize(f):
-    memo = {}
+def get_fibonacci(curent_order, answer, next):
+    """
+    compute fibonacci using tail recursion
+    :param curent_order: iterator
+    :param answer:
+    :param next:
+    :return:
+    """
+    if curent_order == 0:
+        return answer
+    return get_fibonacci(curent_order - 1, next, answer + next)
 
-    def helper(x):
-        if x not in memo:
-            memo[x] = f(x)
-        return memo[x]
-    return helper
 
-
-@memoize
 def fibonacci(member_order):
     """ Computes n-th fibonacci number
 
@@ -22,10 +24,7 @@ def fibonacci(member_order):
         n-th fibonacci number
     """
 
-    if member_order in (1, 2):
-        return 1
-    else:
-        return fibonacci(member_order - 1) + fibonacci(member_order - 2)
+    return get_fibonacci(member_order, 0, 1)
 
 
 if __name__ == "__main__":
@@ -34,5 +33,4 @@ if __name__ == "__main__":
     else:
         fibonacci_order = int(input("Input fibonacci order "))
 
-    print(fibonacci(fibonacci_order))
     print(fibonacci(fibonacci_order))
