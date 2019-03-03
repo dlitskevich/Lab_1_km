@@ -10,6 +10,20 @@ def unique_words(sentence):
     unique_list = list(set(words_list))
     return unique_list
 
+def combinations(words):
+    """
+    combine words
+    :param words:
+    :return: list of all possible combinations
+    """
+    combinations_list = []
+    i = 1
+    for word_1 in words:
+        for word_2 in words[i:]:
+            combinations_list.append(word_1 + word_2)
+        i += 1
+    return combinations_list
+
 
 def even_pairs(sentence):
     """
@@ -35,5 +49,5 @@ def even_pairs(sentence):
 if __name__ == "__main__":
     txt = "A B C A"
 
-    print(unique_words(txt)[1:])
-    print(even_pairs(txt))
+    print(unique_words(txt))
+    print(combinations(unique_words(txt)))
