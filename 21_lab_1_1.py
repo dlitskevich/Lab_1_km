@@ -14,7 +14,7 @@ def get_fibonacci(curent_order, answer, next):
     return get_fibonacci(curent_order - 1, next, answer + next)
 
 
-def fibonacci(member_order):
+def fibonacci_tail_recursion(member_order):
     """ Computes n-th fibonacci number
 
         Arguments:
@@ -26,6 +26,21 @@ def fibonacci(member_order):
 
     return get_fibonacci(member_order, 0, 1)
 
+# iterations
+def fibonacci_iteration(member_order):
+    """
+    Computes n-th fibonacci number
+    :param member_order:
+    :return: n-th fibonacci
+    """
+    index = 0
+    answer = 0
+    next = 1
+    while index < member_order:
+        answer, next = next, answer + next
+        index += 1
+    return answer
+
 
 if __name__ == "__main__":
     if len(sys.argv) >= 2:
@@ -33,4 +48,5 @@ if __name__ == "__main__":
     else:
         fibonacci_order = int(input("Input fibonacci order "))
 
-    print(fibonacci(fibonacci_order))
+    #print(fibonacci_tail_recursion(fibonacci_order))
+    print(fibonacci_iteration(fibonacci_order))
