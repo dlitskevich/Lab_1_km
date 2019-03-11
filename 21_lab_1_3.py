@@ -35,6 +35,15 @@ def one_factor(composite_number):
     return composite_number
 
 
+def task(composite_number):
+    """
+    Call simple_factors
+    :param composite_number:
+    :return: list of prime factors
+    """
+    return simple_factors(composite_number)
+
+
 if __name__ == "__main__":
     # let input from command line
     if len(sys.argv) >= 2:
@@ -42,5 +51,5 @@ if __name__ == "__main__":
     else:
         number = int(input("Input number: "))
 
-    print(simple_factors(number))
-    print(number)
+    print(task(number))
+    # print(number)
