@@ -9,18 +9,19 @@ def simple_factors(composite_number):
     :return: list of prime factors (sorted)
     """
     factors = []
-    number = composite_number
-    while number >= 2:
-        factor = one_factor(number)
+
+    # not affecting outer variable
+    while composite_number >= 2:
+        factor = one_factor(composite_number)
         factors.append(factor)
-        number //= factor
+        composite_number //= factor
 
     return factors
 
 
 def one_factor(composite_number):
     """
-    Compute the smallest factor of the given number
+    Compute the smallest factor of the given composite_number
     :param composite_number:
     :return: primal factor
     """
@@ -34,11 +35,21 @@ def one_factor(composite_number):
     return composite_number
 
 
+def task(composite_number):
+    """
+    Call simple_factors
+    :param composite_number:
+    :return: list of prime factors
+    """
+    return simple_factors(composite_number)
+
+
 if __name__ == "__main__":
     # let input from command line
     if len(sys.argv) >= 2:
         number = int(sys.argv[1])
     else:
-        number = int(input("Input number "))
+        number = int(input("Input number: "))
 
-    print(simple_factors(number))
+    print(task(number))
+    # print(number)
