@@ -34,9 +34,9 @@ def fibonacci_iteration(member_order):
     """
     index = 0
     answer = 0
-    next = 1
+    following = 1
     while index < member_order:
-        answer, next = next, answer + next
+        answer, following = following, answer + following
         index += 1
     return answer
 
