@@ -12,15 +12,15 @@ def unique_words(sentence):
     return unique_list
 
 
-def add_word_combinations(combinations, new_word, order):
+def add_word_combinations(old_combinations, new_word, order):
     """
     to all elements add new word and place it in suitable position
-    :param combinations:
+    :param old_combinations:
     :param new_word:
     :param order:
     :return: list of all combinations with current words
     """
-    combinations_list = combinations
+    combinations_list = old_combinations
     combinations_list.append([])
 
     for row_old in range(order, 0, -1):
@@ -65,6 +65,12 @@ def even_combinations(words):
     return even_combinations_list
 
 
+def task(text_to_split):
+    """"""
+    words = unique_words(text_to_split)
+    return even_combinations(words)
+
+
 if __name__ == "__main__":
 
     if len(sys.argv) >= 2:
@@ -73,7 +79,7 @@ if __name__ == "__main__":
         text = (input("Input text: "))
 
     print(unique_words(text))
-    print(even_combinations(unique_words(text)))
+    print(task(text))
 
     """ Testament
     # text = "A B C A D A E"
