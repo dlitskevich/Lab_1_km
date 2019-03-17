@@ -9,7 +9,6 @@ def simple_factors(composite_number):
     :return: list of prime factors (sorted)
     """
     factors = []
-
     # not affecting outer variable
     while composite_number >= 2:
         factor = one_factor(composite_number)
