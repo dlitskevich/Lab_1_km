@@ -12,43 +12,51 @@ def unique_words(sentence):
     return unique_list
 
 
-def add_word_combinations(old_combinations, new_word, order):
-    """
-    to all elements add new word and place it in suitable position
-    :param old_combinations:
-    :param new_word:
-    :param order:
-    :return: list of all combinations with current words
-    """
-    combinations_list = old_combinations
-    combinations_list.append([])
-
-    for row_old in range(order, 0, -1):
-        for each_old in range(len(combinations_list[row_old - 1])):
-            combinations_list[row_old].append(
-                combinations_list[row_old - 1][each_old] + new_word
-            )
-    combinations_list[0].append(new_word)
-    return combinations_list
-
-
-def combinations(words):
+def combinations(words, length):
     """
     combine words
     :param words:
+    :param length: how many elements in each list
     :return: list of all possible combinations not repeating elements
+        of the same length
     """
     quantity = len(words)
     combinations_list = []
+    index = list(range(length))
+    done = 0
+    while True:
+        new_word = []
+        # print(index)
+        for element in index:
+            new_word.append(words[element])
+        combinations_list.append(new_word)
+        # print(new_word)
+        new_step = 0
+        for number in range(length-1, 0, -1):
+            if not new_step:
+                index[number] += 1
+            element = index[number]
+            # print(element)
+            # print(quantity - length + number)
+            if element > quantity - length + number:
+                new_step = 1
+                # print(index)
+                index[number-1] += 1
+                # print(index[0])
 
-    for row in range(0, quantity):
-        new_word = [words[row]]
-        combinations_list = \
-            add_word_combinations(combinations_list, new_word, row)
-        """
-        to see how it works step by step
-        print(combinations_list)
-        """
+                if index[0] > quantity - length:
+                    done = 1
+
+                else:
+                    index[number-1:] = \
+                     range(index[number-1],
+                           index[number-1]+length-number+1, 1)
+                # print(index)
+
+            if not new_step:
+                break
+        if done:
+            break
     return combinations_list
 
 
@@ -58,20 +66,22 @@ def even_combinations(words):
     :param words:
     :return: list of even combinations
     """
-    all_combinations = combinations(words)
     even_combinations_list = []
-    for even in range(1, len(words)+1//2, 2):
-        even_combinations_list.append(all_combinations[even])
+    for even in range(2, len(words) + 1, 2):
+        even_combinations_list.append(combinations(words, even))
     return even_combinations_list
 
 
 def task(text_to_split):
     """"""
     words = unique_words(text_to_split)
+    if len(words) < 2:
+        return []
     return even_combinations(words)
 
 
 if __name__ == "__main__":
+    # print(combinations(["A", "B", "C", "D", "E", "F"], 2))
 
     if len(sys.argv) >= 2:
         text = (sys.argv[1])
