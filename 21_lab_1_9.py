@@ -8,12 +8,12 @@ def flatten(nested_list):
 
         Returns: flattened list
     """
-    flattened_list = []
-    subflatten(nested_list, flattened_list)
+    flattened_list = [element for element in subflatten(nested_list)]
+
     return flattened_list
 
 
-def subflatten(nested_list, flattened_list):
+def subflatten(nested_list):
     """ technical function to flatten nested list
         Arguments:
         nested_list -- nested list
@@ -22,9 +22,10 @@ def subflatten(nested_list, flattened_list):
     """
     if isinstance(nested_list, list):
         for index in range(len(nested_list)):
-            subflatten(nested_list[index], flattened_list)
+            for el in subflatten(nested_list[index]):
+                yield el
     else:
-        flattened_list.append(nested_list)
+        yield nested_list
 
 
 def task(nested_list):
