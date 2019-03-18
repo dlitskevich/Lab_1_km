@@ -67,7 +67,7 @@ def even_combinations(words):
     :return: list of even combinations
     """
     even_combinations_list = []
-    for even in range(2, len(words)//2 + 3, 2):
+    for even in range(2, len(words) + 1, 2):
         even_combinations_list.append(combinations(words, even))
     return even_combinations_list
 
@@ -75,6 +75,8 @@ def even_combinations(words):
 def task(text_to_split):
     """"""
     words = unique_words(text_to_split)
+    if len(words) < 2:
+        return []
     return even_combinations(words)
 
 
