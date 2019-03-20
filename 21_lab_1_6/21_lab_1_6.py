@@ -61,6 +61,7 @@ def task(file, *args):
     """"""
     generate_garbage(file, *args[:3])
 
+
 if __name__ == "__main__":
 
     argv = sys.argv[1:]
@@ -81,4 +82,3 @@ if __name__ == "__main__":
     print(" Output file is ", outputfile)
 
     task(outputfile, *args[:3])
-
