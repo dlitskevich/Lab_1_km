@@ -57,6 +57,10 @@ def generate_garbage(file, rows, quantity, length=random.randrange(1, 16)):
           " length of every word: {2}".format(rows, quantity, length))
 
 
+def task(file, *args):
+    """"""
+    generate_garbage(file, *args[:3])
+
 if __name__ == "__main__":
 
     argv = sys.argv[1:]
@@ -76,4 +80,5 @@ if __name__ == "__main__":
 
     print(" Output file is ", outputfile)
 
-    generate_garbage(outputfile, *args[:3])
+    task(outputfile, *args[:3])
+
