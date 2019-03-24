@@ -62,7 +62,6 @@ def task(file, *arguments):
     generate_garbage(file, *arguments[:3])
 
 
-
 if __name__ == "__main__":
 
     argv = sys.argv[1:]
