@@ -1,17 +1,17 @@
 import sys
 
 
-def get_fibonacci(current_order, answer, next):
+def get_fibonacci(current_order, answer, next_one):
     """
     compute fibonacci using tail recursion
     :param current_order: iterator
     :param answer:
-    :param next:
+    :param next_one:
     :return:
     """
     if current_order == 0:
         return answer
-    return get_fibonacci(current_order - 1, next, answer + next)
+    return get_fibonacci(current_order - 1, next_one, answer + next_one)
 
 
 def fibonacci_tail_recursion(member_order):
