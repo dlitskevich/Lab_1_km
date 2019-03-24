@@ -1,5 +1,6 @@
 import sys
 import getopt
+import math
 
 
 def merge_two(unsorted_list):
@@ -18,12 +19,29 @@ def merge_two(unsorted_list):
     # print(first_part, second_part)
 
 
+def divide_list(plain_list):
+    """"""
+    length = len(plain_list)
+    max_exponent = int(math.log(length, 2))
+    for exponent in range(max_exponent-1, 0, -1):
+        step = 2
+        index_start, index_end = 0, step
+
+        while index_start < 2 ** exponent:
+            plain_list[index_start:index_end] = [plain_list[index_start:index_end]]
+            index_start, index_end = index_start + 1, index_end + step - 1
+
+    return plain_list
+
+
+
 def merge_sort(file, unsorted_list):
     """"""
+    divided_list = divide_list(unsorted_list)
     for step in merge_two(unsorted_list):
         print(step)
 
-    return None
+    return divided_list
 
 
 def task(file, unsorted_list):
@@ -56,5 +74,6 @@ if __name__ == "__main__":
     else:
         print(" Output in console: \n")
 
-    list = [13, 4, 10, 6, 15, 1, 12, 7, 9, 16, 3, 11, 5, 8, 2, 14]
-    task(outputfile, list)
+    list_test = [13, 4, 10, 6, 15, 1, 12, 7, 9, 16, 3, 11, 5, 8, 2, 14]
+    task(outputfile, list_test)
+    print(divide_list(list_test))
