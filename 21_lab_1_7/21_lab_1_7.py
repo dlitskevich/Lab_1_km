@@ -1,6 +1,7 @@
 import sys
 import getopt
 import os
+import subprocess
 
 
 def get_text_stats(file):
@@ -22,9 +23,9 @@ def task(file,):
 if __name__ == "__main__":
 
     argv = sys.argv[1:]
-    current_path = os.path.dirname(__file__)
 
-    inputfile = "../21_lab_1_5/output.txt"
+    # current_path = os.path.dirname(__file__)
+    inputfile = ""
 
     try:
         opts, args = getopt.getopt(argv, "hi:", ["ifile="])
@@ -37,6 +38,12 @@ if __name__ == "__main__":
             sys.exit()
         elif opt in ("-i", "--ifile"):
             inputfile = arg
+
+    if inputfile:
+        # os.system('python ../21_lab_1_6/21_lab_1_6.py 3 4')
+        subprocess.call(["python", "../21_lab_1_6/21_lab_1_6.py 3 4", ])
+        inputfile = "../21_lab_1_6/output.txt"
+
 
     print(" Input file is ", inputfile)
 
