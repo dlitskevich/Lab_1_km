@@ -1,6 +1,6 @@
 import sys
 import getopt
-import random
+import os
 
 
 def get_text_stats(file):
@@ -9,20 +9,12 @@ def get_text_stats(file):
     :return: text stats
     """
 
-    with open(file, "w") as output:
-        """
-        quite many chars
-        for i in range(1000):
-            output.write("{}".format(i) + ": " + chr(i) + "\n")
-        """
+    with open(file, "r") as text:
+
+        print(text.read())
 
 
-    print(" Rows: {0} \n"
-          " Quantity of words: {1} \n"
-          " length of every word: {2}")
-
-
-def task(file, *arguments):
+def task(file,):
     """"""
     get_text_stats(file)
 
@@ -30,20 +22,22 @@ def task(file, *arguments):
 if __name__ == "__main__":
 
     argv = sys.argv[1:]
-    outputfile = "output.txt"
+    current_path = os.path.dirname(__file__)
+
+    inputfile = "../21_lab_1_5/output.txt"
 
     try:
-        opts, args = getopt.getopt(argv, "ho:", ["ofile="])
+        opts, args = getopt.getopt(argv, "hi:", ["ifile="])
     except getopt.GetoptError:
-        print('21_lab_1_6.py -o <outputfile> rows quantity length')
+        print('21_lab_1_6.py -i <inputfile>')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print('21_lab_1_6.py -o <outputfile> rows quantity length')
+            print('21_lab_1_6.py -i <inputfile>')
             sys.exit()
-        elif opt in ("-o", "--ofile"):
-            outputfile = arg
+        elif opt in ("-i", "--ifile"):
+            inputfile = arg
 
-    print(" Output file is ", outputfile)
+    print(" Input file is ", inputfile)
 
-    task(outputfile, *args[:3])
+    task(inputfile)
