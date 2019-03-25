@@ -4,7 +4,11 @@ import math
 
 
 def merge_two(unsorted_list):
-    """"""
+    """
+    get two lists and sort them in ascending way
+    :param unsorted_list:
+    :return: list
+    """
 
     length = len(unsorted_list) // 2
     if length < 1:
@@ -32,7 +36,11 @@ def merge_two(unsorted_list):
 
 
 def merge_sort(plain_list):
-    """"""
+    """
+    generator sort
+    :param plain_list:
+    :return: 
+    """
     length = len(plain_list)
     max_exponent = int(math.log(length, 2))
     for exponent in range(max_exponent, -1, -1):
