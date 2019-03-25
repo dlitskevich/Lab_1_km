@@ -3,43 +3,11 @@ import getopt
 import random
 
 
-def random_syllable():
+def get_text_stats(file):
     """
-    random syllable in range 33 - 126 (can be more)
-    :return: char
+    find some stats of text
+    :return: text stats
     """
-    return chr(random.randrange(33, 126))
-
-
-def garbage_word(length):
-    """
-    create word from random syllables
-    :param length:
-    :return: word
-    """
-    word = ""
-    for syllable in range(length):
-        word += random_syllable()
-    return word
-
-
-def generate_garbage(file, rows, quantity, length=random.randrange(1, 16)):
-    """
-    fill file with garbage
-    :param file: where to write
-    :param rows:
-    :param quantity: of words in a row
-    :param length: of each word
-    :return: None
-    """
-    try:
-        rows, quantity, length = \
-            int(rows), int(quantity), int(length)
-    except ValueError as err:
-        print("rows, quantity, length must be positive int: {}".format(err))
-        sys.exit(3)
-    assert quantity > 0 and rows > 0 and length > 0, \
-        "rows, quantity, length must be positive int"
 
     with open(file, "w") as output:
         """
@@ -47,19 +15,16 @@ def generate_garbage(file, rows, quantity, length=random.randrange(1, 16)):
         for i in range(1000):
             output.write("{}".format(i) + ": " + chr(i) + "\n")
         """
-        for row in range(rows):
-            for word in range(quantity):
-                output.write(garbage_word(length) + "   ")
-            output.write("\n")
+
 
     print(" Rows: {0} \n"
           " Quantity of words: {1} \n"
-          " length of every word: {2}".format(rows, quantity, length))
+          " length of every word: {2}")
 
 
 def task(file, *arguments):
     """"""
-    generate_garbage(file, *arguments[:3])
+    get_text_stats(file)
 
 
 if __name__ == "__main__":
