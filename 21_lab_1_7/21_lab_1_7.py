@@ -39,9 +39,9 @@ if __name__ == "__main__":
         elif opt in ("-i", "--ifile"):
             inputfile = arg
 
-    if inputfile:
+    if not inputfile:
         # os.system('python ../21_lab_1_6/21_lab_1_6.py 3 4')
-        subprocess.call(["python", "../21_lab_1_6/21_lab_1_6.py 3 4", ])
+        subprocess.run(["python", "../21_lab_1_6/21_lab_1_6.py 3 4", ])
         inputfile = "../21_lab_1_6/output.txt"
 
 
