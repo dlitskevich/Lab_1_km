@@ -6,7 +6,11 @@ from collections import defaultdict
 
 
 def sentence_to_words(sentence):
-    """"""
+    """
+
+    :param sentence:
+    :return:
+    """
     punktuation = ",.:;!?"
     words = nltk.tokenize.word_tokenize(sentence)
 
@@ -18,7 +22,11 @@ def sentence_to_words(sentence):
 
 
 def textfile_to_swords(file_to_read):
-    """"""
+    """
+
+    :param file_to_read:
+    :return:
+    """
     text = file_to_read.read().replace("\n", " ").lower()
     sentences = nltk.tokenize.sent_tokenize(text)
 
@@ -28,7 +36,11 @@ def textfile_to_swords(file_to_read):
 
 
 def count_words(text):
-    """"""
+    """
+
+    :param text:
+    :return:
+    """
     words_dict = defaultdict(int)  # default value of int is 0
     for sentence in text:
         for word in sentence:
@@ -38,7 +50,11 @@ def count_words(text):
 
 
 def average_quantity(text):
-    """"""
+    """
+
+    :param text:
+    :return:
+    """
     total_quantity_words = 0
     quantity_sentences = len(text)
     for sentence in text:
@@ -49,7 +65,11 @@ def average_quantity(text):
 
 
 def median_quantity(text):
-    """"""
+    """
+
+    :param text:
+    :return:
+    """
     quantity_words = []
     median_index = len(text) // 2 - 1
 
@@ -61,7 +81,12 @@ def median_quantity(text):
 
 
 def grams(text, gram_length):
-    """"""
+    """
+
+    :param text:
+    :param gram_length:
+    :return:
+    """
     top_gram = defaultdict(int)
     for sentence in text:
         for word in sentence:
@@ -70,15 +95,37 @@ def grams(text, gram_length):
                     new_gram = word[start_position:start_position+gram_length]
                     top_gram[new_gram] += 1
 
-    print(top_gram)
     return top_gram
 
 
 def top_grams(text, top_capacity, length):
-    """"""
+    """
+
+    :param text:
+    :param top_capacity:
+    :param length:
+    :return:
+    """
     all_grams = grams(text, length)
-    top_only_grams = defaultdict(int)
-    # TODO: detect largest values and save their keys
+    top_only_grams = {}
+    quantity_grams = len(all_grams)
+    # for the God's sake :)
+    if top_capacity > quantity_grams:
+        top_capacity = quantity_grams
+
+    for current_position in range(top_capacity):
+        largest_word, largest_quantity = "", 0
+
+        for word, quantity in all_grams.items():
+            if quantity > largest_quantity:
+                largest_word, largest_quantity = word, quantity
+
+        del all_grams[largest_word]
+        top_only_grams[largest_word] = largest_quantity
+
+    return top_only_grams
+
+
 def get_text_stats(file, top_number, number_grams):
     """
     find some stats of text
@@ -100,16 +147,33 @@ def get_text_stats(file, top_number, number_grams):
         print("\nAverage quantity of words in sentences:"
               " {}".format(int(average_quantity(text))))
 
-        print("\nMedian quantity of words in sentences:"
+        print("Median quantity of words in sentences:"
               " {}\n".format(median_quantity(text)))
-        grams(text, top_number, number_grams)
+
+        print("Top {} of {}-grams : \n".format(top_number, number_grams))
+        top_position = 1
+        for word, quantity in top_grams(text, top_number, number_grams).items():
+            print("  {0}.  {1}: {2}".format(top_position, word, quantity))
+            top_position += 1
 
 
 def task(file, top_length, length_gram):
-    """"""
-    if not isinstance(top_length, int):
+    """
+    
+    :param file:
+    :param top_length:
+    :param length_gram:
+    :return:
+    """
+    try:
+        top_length = int(top_length)
+    except ValueError as err:
+        print("Default Values will be aplied, as {} \n".format(err))
         top_length = 10
-    if not isinstance(length_gram, int):
+    try:
+        length_gram = int(length_gram)
+    except ValueError as err:
+        print("Default Values will be aplied, as {} \n".format(err))
         length_gram = 4
 
     get_text_stats(file, top_length, length_gram)
@@ -121,6 +185,15 @@ if __name__ == "__main__":
         argv = sys.argv[1:]
         # current_path = os.path.dirname(__file__)
         inputfile = ""
+        top_quantity, length_n_gram = "", ""
+        try:
+            top_quantity = sys.argv[3]
+        except IndexError:
+            top_quantity = 10
+        try:
+            length_n_gram = sys.argv[4]
+        except IndexError:
+            length_n_gram = 4
 
         try:
             opts, args = getopt.getopt(argv, "hi:", ["ifile="])
@@ -133,22 +206,23 @@ if __name__ == "__main__":
                 sys.exit()
             elif opt in ("-i", "--ifile"):
                 inputfile = arg
-        task(inputfile, * sys.argv[2:])
+
     # Input from keyboard
     else:
         inputfile = input("Inputfile path: ")
         top_quantity = input("Input length of Top n-grams: ")
         length_n_gram = input("Input length of n-grams: ")
+
     # for test purposes MUST exist garbage_generator
     if not inputfile:
         generate_new = input("Wanna generate new file? ")
         if generate_new:
-            os.system('python ../21_lab_1_6/21_lab_1_6.py -o garbage.txt 40 60 3')
-        # TODO: change to garbage.txt
-        inputfile = "text.txt"
+            os.system('python ../21_lab_1_6/21_lab_1_6.py -o garbage.txt 40 60 4')
 
-    print("\n Input file is {} \n".format(inputfile))
-    # if needed
-    # nltk.download('punkt')
+        inputfile = "garbage.txt"
+
+    print(" Input file is: {} \n".format(inputfile))
 
     task(inputfile, top_quantity, length_n_gram)
+    # if needed
+    # nltk.download('punkt')
