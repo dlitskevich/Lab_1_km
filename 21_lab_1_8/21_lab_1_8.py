@@ -1,15 +1,158 @@
 import sys
 import getopt
-import math
+import re
 
 
-def task(file, unsorted_list):
+def get_command(command):
+    """
+
+    :param command:
+    :return: command name and arguments
+    """
+    name, arguments = "", ""
+    try:
+        first_whitespace = 0
+        for first_whitespace in range(len(command)):
+            if command[first_whitespace] == " ":
+                break
+            first_whitespace += 1
+
+        name, arguments = \
+            command[:first_whitespace], command[first_whitespace+1:]
+
+    except TypeError:
+        name = command
+
+    return name, arguments
+
+
+def add(storage, keys):
     """"""
-    if not file:
-        print()
+    if keys == "":
+        return storage
+    try:
+        keys = eval(keys)
+    except NameError:
+        pass
+
+    if isinstance(keys, list):
+        storage.update(keys)
     else:
-        with open(file, "w") as output:
-            print()
+        storage.add(str(keys))
+    return storage
+
+
+def remove(storage, key):
+    """"""
+    if key == "":
+        return storage
+    try:
+        key = eval(key)
+    except NameError:
+        pass
+    storage.discard(key)
+    return storage
+
+
+def find(storage, keys):
+    """"""
+    if keys == "":
+        return storage
+    try:
+        keys = eval(keys)
+    except NameError:
+        pass
+
+    if isinstance(keys, list):
+        found = storage.intersection(keys)
+    else:
+        found = storage.intersection([keys])
+    if found:
+        print("Found in storage: {}".format(found))
+    else:
+        print("Nothing Found")
+    return storage
+
+
+def list_items(storage):
+    """"""
+    if not storage:
+        print("Storage is empty ")
+        return storage
+    print("Storage: ")
+    for item in storage:
+        print("  {}".format(item))
+    return storage
+
+
+def grep(storage, regex):
+    """"""
+
+    try:
+        regex = str(eval(regex))
+    except NameError:
+        return storage
+    found = set()
+    for item in storage:
+        if re.search(regex, str(item)):
+            found.add(item)
+
+    if found:
+        print("Matched in storage: {}".format(found))
+    else:
+        print("Nothing Matched")
+    return storage
+
+
+def save(storage, output):
+    """"""
+    with open(output, "w") as out:
+        for item in storage:
+            out.write("{}\n".format(item))
+    print("Saved to {}".format(output))
+    return storage
+
+
+def load(input_file):
+    """"""
+    new_storage = set()
+    with open(input_file, "r") as infile:
+        for item in infile:
+            new_storage.add(item.replace('\n', ''))
+    print("Copied from {}".format(input_file))
+    return new_storage
+
+
+def apply_command(input_file, output_file, storage, name="", arguments=""):
+    """"""
+    print(storage, name, arguments, input_file, output_file)
+    commands = {
+        "add": "add(storage, arguments)",
+        "remove": "remove(storage, arguments)",
+        "find": "find(storage, arguments)",
+        "list": "list_items(storage)",
+        "grep": "grep(storage, arguments)",
+        "load": "load(inputfile)",
+        "save": "save(storage, outputfile)",
+        "exit": "exit(0)"
+
+    }
+    if name == "help":
+        for pair in commands.items():
+            print(pair)
+    if name in commands:
+        storage = eval(commands[name])
+    return storage
+
+
+def task(in_file, out_file):
+    """"""
+    storage = set()
+
+    while True:
+        command = input(">> ")
+
+        storage = apply_command(in_file, out_file, storage, * get_command(command))
 
 
 if __name__ == "__main__":
@@ -32,18 +175,12 @@ if __name__ == "__main__":
         elif opt in ("-o", "--ofile"):
             outputfile = arg
 
-    if outputfile:
-        print(" Output file is ", outputfile)
-    else:
-        print(" Output in console: \n")
+    if not outputfile:
+        outputfile = "save.txt"
+    print(" Output file is ", outputfile)
 
-    if inputfile:
-        print(" Input file is ", inputfile)
-        with open(inputfile, "r") as input_file:
-            list_merge = input_file.read()
-        task(outputfile, eval(list_merge))
+    if not inputfile:
+        inputfile = "load.txt"
+    print(" Input file is ", inputfile)
 
-    else:
-        list_test = [13, 4, 10, 6, 15, 1, 12, 7, 9, 16, 3, 11, 5, 8, 2, 14]
-        print("List to Merge_Sort: ", list_test)
-        task(outputfile, list_test)
+    task(inputfile, outputfile)
