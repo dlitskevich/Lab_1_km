@@ -1,0 +1,202 @@
+import json
+# for test only
+import re
+
+
+def split_object(object_json):
+    """"""
+
+    array_string = object_json[2:-2].split(' ')
+
+    start_position = -1
+    opening_bracket = 0
+    closing_bracket = 0
+    length = len(array_string)
+    index = 0
+    while index < length:
+
+        item = array_string[index]
+        # print(item)
+        for start in range(len(item)):
+            if item[start] == "{":
+                opening_bracket += 1
+            else:
+                break
+        if len(item) == 1:
+            if item == "}":
+                closing_bracket += 1
+        else:
+            for end in range(len(item)):
+                if item[-end - 1] == "}":
+                    closing_bracket += 1
+
+        # print(opening_bracket, closing_bracket, start_position)
+        if opening_bracket == 0:
+            index += 1
+            continue
+        if opening_bracket == 1 and start_position == -1:
+            start_position = index
+
+        # condition when array is closed
+        if opening_bracket == closing_bracket:
+            # print(", ".join(array_string[start_position:index + 1]))
+            array_string[start_position:index + 1] = \
+                [" ".join(array_string[start_position:index + 1])]
+            print(array_string)
+            # initializing before next step
+            differance = index - start_position
+            length -= differance
+            index -= differance
+
+            opening_bracket = 0
+            closing_bracket = 0
+            start_position = -1
+        index += 1
+    return array_string
+
+
+def object_to_dict(object_json):
+    """"""
+    dict_py = {}
+    splitted = split_object(object_json)
+    print(splitted)
+    print(len(splitted))
+
+    for index in range(0, len(splitted), 2):
+        dict_py[json_to_object(splitted[index][:-1])] = \
+            json_to_object(splitted[index+1][:-1])
+
+    return dict_py
+
+
+def split_array(array_json):
+    """"""
+    array_string = array_json[1:-1].split(", ")
+
+    start_position = -1
+    opening_bracket = 0
+    closing_bracket = 0
+    length = len(array_string)
+    index = 0
+    while index < length:
+
+        item = array_string[index]
+        # print(item)
+        for start in range(len(item)):
+            if item[start] == "[":
+                opening_bracket += 1
+            else:
+                break
+        for end in range(len(item) + 1):
+            if item[-end - 1] == "]":
+                closing_bracket += 1
+            else:
+                break
+        # print(opening_bracket, closing_bracket, start_position)
+        if opening_bracket == 0:
+            index += 1
+            continue
+        if opening_bracket == 1 and start_position == -1:
+            start_position = index
+
+        # condition when array is closed
+        if opening_bracket == closing_bracket:
+            # print(", ".join(array_string[start_position:index + 1]))
+            array_string[start_position:index + 1] = \
+                [", ".join(array_string[start_position:index + 1])]
+            # print(array_string)
+            # initializing before next step
+            differance = index - start_position
+            length -= differance
+            index -= differance
+
+            opening_bracket = 0
+            closing_bracket = 0
+            start_position = -1
+        index += 1
+    return array_string
+
+
+def array_to_list(array_json):
+    """"""
+    list_py = []
+    # true, false, null = "true", "false", "null"
+    array = split_array(array_json)
+    for item in array:
+        list_py.append(json_to_object(item))
+    return list_py
+
+
+def true_or_false(object_json):
+    """"""
+    if object_json == "true":
+        return True
+    return False
+
+
+def detect_type(object_json):
+    """"""
+    types = {
+        r"{.*}": dict,
+        r"\[.*\]": list,
+        r"\".*\"": str,
+        r"[+-]?[0-9]+": int,
+        r"[+-]?[0-9]+[.]{1}[0-9]*": float,
+        r"true|false": bool
+
+    }
+    for regex in types.keys():
+        if re.search(regex, object_json):
+            return types[regex]
+
+
+def json_to_object(object_json):
+    """"""
+    types = {
+        dict: "object_to_dict(object_json)",
+        list: "array_to_list(object_json)",
+
+        str: "object_json[1:-1]",
+        int: "int(object_json)",
+        float: "float(object_json)",
+        bool: "true_or_false(object_json)"
+
+    }
+    if object_json == "null":
+        return None
+
+    object_type = detect_type(object_json)
+    # print(object_type, object_json)
+    if object_type in types:
+        object_json = eval(types[object_type])
+        return object_json
+    else:
+        raise ValueError
+
+
+def task(object_json):
+    """"""
+    return json_to_object(object_json)
+
+
+if __name__ == "__main__":
+    test_json = '{ "name": "John", "age": 5, "city": "New-York", "f": true, "t": null, }'
+    another_test = '{ "glossary": ' \
+                   '{ "title": "example-glossary", ' \
+                   '"GlossDiv": { "title": "S", "GlossList": ' \
+                   '{ "GlossEntry": { "ID": "SGML", "SortAs": "SGML", ' \
+                   '"GlossTerm": "Standard-Generalized-Markup-Language", ' \
+                   '"Acronym": "SGML", "Abbrev": "ISO-8879:1986", ' \
+                   '"GlossDef": { "para": "A-meta-markup-language,' \
+                   'used-to-create-markup-languages-such-as-DocBook.", ' \
+                   '"GlossSeeAlso": ["GML", "XML"] }, "GlossSee": ' \
+                   '"markup" } } } } }'
+
+    # Tests and comparison
+    # print(task(test_json))
+    # print(json.loads(test_json))
+
+    # print(task('[1, 2, ["da", [1, 2], [1, 2], 1], 1, [true, false], [true, false]]'))
+    # print(json.loads(another_test))
+    # print(task(test_json).items())
+    print(object_to_dict(another_test))
