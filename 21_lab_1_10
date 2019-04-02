@@ -55,20 +55,6 @@ def split_object(object_json):
     return array_string
 
 
-def object_to_dict(object_json):
-    """"""
-    dict_py = {}
-    splitted = split_object(object_json)
-    print(splitted)
-    print(len(splitted))
-
-    for index in range(0, len(splitted), 2):
-        dict_py[json_to_object(splitted[index][:-1])] = \
-            json_to_object(splitted[index+1][:-1])
-
-    return dict_py
-
-
 def split_array(array_json):
     """"""
     array_string = array_json[1:-1].split(", ")
@@ -115,6 +101,63 @@ def split_array(array_json):
             start_position = -1
         index += 1
     return array_string
+
+
+def split_to_array(object_json, ):
+    """"""
+    array_string = object_json[1:-1] + ","
+    array = []
+
+    start_position = 0
+    opening_bracket = 0
+    closing_bracket = 0
+
+    length = len(array_string)
+    index = 0
+    while index < length:
+        item = array_string[index]
+        # print(item)
+
+        if item == " ":
+            index += 1
+            continue
+
+        if item == "{":
+            opening_bracket += 1
+
+        if item == "}":
+            closing_bracket += 1
+
+        # condition when array is closed
+        if opening_bracket == closing_bracket and item == ",":
+            element = "".join(array_string[start_position:index + 1])
+            print(element)
+
+            array.append(element)
+            # print(array_string)
+
+            # initializing before next step
+            opening_bracket = 0
+            closing_bracket = 0
+            start_position = index + 1
+
+        index += 1
+
+    return array
+
+
+def object_to_dict(object_json):
+    """"""
+    dict_py = {}
+    splitted = split_object(object_json)
+    print(splitted)
+    print(len(splitted))
+
+    for index in range(0, len(splitted), 2):
+        dict_py[json_to_object(splitted[index][:-1])] = \
+            json_to_object(splitted[index+1][:-1])
+
+    return dict_py
 
 
 def array_to_list(array_json):
@@ -180,7 +223,7 @@ def task(object_json):
 
 
 if __name__ == "__main__":
-    test_json = '{ "name": "John", "age": 5, "city": "New-York", "f": true, "t": null, }'
+    test_json = '{ "name": {"John" : [3, 4], {"Dan" : 4}}, "age": 5, "city": "New-York", "f": true, "t": null, "key": { "name": {"John" : [3, 4], {"Dan" : 4}}, "age": 5, "city": "New-York", "f": true, "t": null} }'
     another_test = '{ "glossary": ' \
                    '{ "title": "example-glossary", ' \
                    '"GlossDiv": { "title": "S", "GlossList": ' \
@@ -198,5 +241,7 @@ if __name__ == "__main__":
 
     # print(task('[1, 2, ["da", [1, 2], [1, 2], 1], 1, [true, false], [true, false]]'))
     # print(json.loads(another_test))
-    # print(task(test_json).items())
-    print(object_to_dict(another_test))
+    #
+    test_json='{"":1}'
+    print(json.loads(test_json))
+    print(split_to_array(test_json))
