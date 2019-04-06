@@ -1,0 +1,184 @@
+import json
+# for test only
+"""
+I decided to use global variables,
+as I did want to make my code more readable
+"""
+char = 0  # index of current character in string_json
+string_json = ""
+
+
+def next_char():
+    """"""
+    global char, string_json
+    if char < len(string_json):
+        char += 1
+    else:
+        exit(-1)
+
+
+def ignore_char():
+    """"""
+    global char, string_json
+
+    if char < len(string_json):
+        discard_character = ", :"
+
+        character = string_json[char]
+        while character in discard_character:
+            char += 1
+            character = string_json[char]
+
+
+def read_object():
+    """"""
+    dict_py = {}
+    next_char()
+    ignore_char()
+
+    character = string_json[char]
+    while not character == "}":
+        key = do_for_type(character)
+        # print(key, char)
+        value = do_for_type(string_json[char])
+        # print(value, char)
+        dict_py[key] = value
+        ignore_char()
+        character = string_json[char]
+
+    ignore_char()
+    next_char()
+    ignore_char()
+    return dict_py
+
+
+def read_array():
+    """"""
+    list_py = []
+    next_char()
+
+    character = string_json[char]
+    while not character == "]":
+        list_py.append(do_for_type(character))
+        ignore_char()
+        character = string_json[char]
+
+    next_char()
+    ignore_char()
+    return list_py
+
+
+def read_string():
+    """"""
+    next_char()
+    caught_string = ""
+
+    character = string_json[char]
+    while character != '"':
+        caught_string += character
+        next_char()
+        character = string_json[char]
+
+    next_char()
+    ignore_char()
+    return caught_string
+
+
+def read_number():
+    """"""
+    digits = "0123456789"
+    caught_number = ""
+
+    character = string_json[char]
+    while character == '.' or character in digits:
+        caught_number += character
+        next_char()
+        character = string_json[char]
+
+    ignore_char()
+    return caught_number
+
+
+def read_true():
+    """"""
+    for i in range(4):
+        next_char()
+    ignore_char()
+    return True
+
+
+def read_false():
+    """"""
+    for i in range(5):
+        next_char()
+    ignore_char()
+    return False
+
+
+def read_null():
+    """"""
+    for i in range(4):
+        next_char()
+    ignore_char()
+    return None
+
+
+def do_for_type(first_charachter):
+    """"""
+    types = {
+        "{": "read_object()",
+        "[": "read_array()",
+        '"': "read_string()",
+        "t": "read_true()",
+        "f": "read_false()",
+        "n": "read_null()"
+
+    }
+    if first_charachter in types:
+        object_py = eval(types[first_charachter])
+        return object_py
+    else:
+        object_py = eval(read_number())
+        if isinstance(object_py, int) or isinstance(object_py, float):
+            return object_py
+        else:
+            raise ValueError
+
+
+def json_to_object(object_json):
+    """"""
+    global char, string_json
+    string_json = object_json
+    char = 0
+
+    return do_for_type(string_json[0])
+
+
+def task(object_json):
+    """"""
+    return json_to_object(object_json)
+
+
+if __name__ == "__main__":
+
+    test_json = '{ "name": {"J[]{}{ohn" : [3, 4]}, "age": 5, "city": ' \
+                '"New-York", "f": true, "t": null, "key": { "name": ' \
+                '{"John" : [3, 4]}, "age": 5, "city": "New-York", "f": ' \
+                'true, "t": null} }'
+    another_test = '{ "glossary": ' \
+                   '{ "title": "example-glossary", ' \
+                   '"GlossDiv": { "title": "S", "GlossList": ' \
+                   '{ "GlossEntry": { "ID": "SGML", "SortAs": "SGML", ' \
+                   '"GlossTerm": "Standard-Generalized-Markup-Language", ' \
+                   '"Acronym": "SGML", "Abbrev": "ISO-8879:1986", ' \
+                   '"GlossDef": { "para": "A-meta-markup-language,' \
+                   'used-to-create-markup-languages-such-as-DocBook.", ' \
+                   '"GlossSeeAlso": ["GML", "XML"] }, "GlossSee": ' \
+                   '"markup" } } } } }'
+
+    # Tests and comparison
+    print(json.loads(test_json))
+    print(task(test_json))
+
+    print(json.loads(another_test))
+    print(task(another_test))
