@@ -1,220 +1,157 @@
 import json
 # for test only
-import re
+"""
+I decided to use global variables,
+as I did want to make my code more readable
+"""
+char = 0  # index of current character in string_json
+string_json = ""
 
 
-def split_object(object_json):
+def next_char():
     """"""
-
-    array_string = object_json[2:-2].split(' ')
-
-    start_position = -1
-    opening_bracket = 0
-    closing_bracket = 0
-    length = len(array_string)
-    index = 0
-    while index < length:
-
-        item = array_string[index]
-        # print(item)
-        for start in range(len(item)):
-            if item[start] == "{":
-                opening_bracket += 1
-            else:
-                break
-        if len(item) == 1:
-            if item == "}":
-                closing_bracket += 1
-        else:
-            for end in range(len(item)):
-                if item[-end - 1] == "}":
-                    closing_bracket += 1
-
-        # print(opening_bracket, closing_bracket, start_position)
-        if opening_bracket == 0:
-            index += 1
-            continue
-        if opening_bracket == 1 and start_position == -1:
-            start_position = index
-
-        # condition when array is closed
-        if opening_bracket == closing_bracket:
-            # print(", ".join(array_string[start_position:index + 1]))
-            array_string[start_position:index + 1] = \
-                [" ".join(array_string[start_position:index + 1])]
-            print(array_string)
-            # initializing before next step
-            differance = index - start_position
-            length -= differance
-            index -= differance
-
-            opening_bracket = 0
-            closing_bracket = 0
-            start_position = -1
-        index += 1
-    return array_string
+    global char, string_json
+    if char < len(string_json):
+        char += 1
+    else:
+        exit(-1)
 
 
-def split_array(array_json):
+def ignore_char():
     """"""
-    array_string = array_json[1:-1].split(", ")
+    global char, string_json
 
-    start_position = -1
-    opening_bracket = 0
-    closing_bracket = 0
-    length = len(array_string)
-    index = 0
-    while index < length:
+    if char < len(string_json):
+        discard_character = ", :"
 
-        item = array_string[index]
-        # print(item)
-        for start in range(len(item)):
-            if item[start] == "[":
-                opening_bracket += 1
-            else:
-                break
-        for end in range(len(item) + 1):
-            if item[-end - 1] == "]":
-                closing_bracket += 1
-            else:
-                break
-        # print(opening_bracket, closing_bracket, start_position)
-        if opening_bracket == 0:
-            index += 1
-            continue
-        if opening_bracket == 1 and start_position == -1:
-            start_position = index
-
-        # condition when array is closed
-        if opening_bracket == closing_bracket:
-            # print(", ".join(array_string[start_position:index + 1]))
-            array_string[start_position:index + 1] = \
-                [", ".join(array_string[start_position:index + 1])]
-            # print(array_string)
-            # initializing before next step
-            differance = index - start_position
-            length -= differance
-            index -= differance
-
-            opening_bracket = 0
-            closing_bracket = 0
-            start_position = -1
-        index += 1
-    return array_string
+        character = string_json[char]
+        while character in discard_character:
+            char += 1
+            character = string_json[char]
 
 
-def split_to_array(object_json, ):
-    """"""
-    array_string = object_json[1:-1] + ","
-    array = []
-
-    start_position = 0
-    opening_bracket = 0
-    closing_bracket = 0
-
-    length = len(array_string)
-    index = 0
-    while index < length:
-        item = array_string[index]
-        # print(item)
-
-        if item == " ":
-            index += 1
-            continue
-
-        if item == "{":
-            opening_bracket += 1
-
-        if item == "}":
-            closing_bracket += 1
-
-        # condition when array is closed
-        if opening_bracket == closing_bracket and item == ",":
-            element = "".join(array_string[start_position:index + 1])
-            print(element)
-
-            array.append(element)
-            # print(array_string)
-
-            # initializing before next step
-            opening_bracket = 0
-            closing_bracket = 0
-            start_position = index + 1
-
-        index += 1
-
-    return array
-
-
-def object_to_dict(object_json):
+def read_object():
     """"""
     dict_py = {}
-    splitted = split_object(object_json)
-    print(splitted)
-    print(len(splitted))
+    next_char()
+    ignore_char()
 
-    for index in range(0, len(splitted), 2):
-        dict_py[json_to_object(splitted[index][:-1])] = \
-            json_to_object(splitted[index+1][:-1])
+    character = string_json[char]
+    while not character == "}":
+        key = do_for_type(character)
+        # print(key, char)
+        value = do_for_type(string_json[char])
+        # print(value, char)
+        dict_py[key] = value
+        ignore_char()
+        character = string_json[char]
 
+    ignore_char()
+    next_char()
+    ignore_char()
     return dict_py
 
 
-def array_to_list(array_json):
+def read_array():
     """"""
     list_py = []
-    # true, false, null = "true", "false", "null"
-    array = split_array(array_json)
-    for item in array:
-        list_py.append(json_to_object(item))
+    next_char()
+
+    character = string_json[char]
+    while not character == "]":
+        list_py.append(do_for_type(character))
+        ignore_char()
+        character = string_json[char]
+
+    next_char()
+    ignore_char()
     return list_py
 
 
-def true_or_false(object_json):
+def read_string():
     """"""
-    if object_json == "true":
-        return True
+    next_char()
+    caught_string = ""
+
+    character = string_json[char]
+    while character != '"':
+        caught_string += character
+        next_char()
+        character = string_json[char]
+
+    next_char()
+    ignore_char()
+    return caught_string
+
+
+def read_number():
+    """"""
+    digits = "0123456789"
+    caught_number = ""
+
+    character = string_json[char]
+    while character == '.' or character in digits:
+        caught_number += character
+        next_char()
+        character = string_json[char]
+
+    ignore_char()
+    return caught_number
+
+
+def read_true():
+    """"""
+    for i in range(4):
+        next_char()
+    ignore_char()
+    return True
+
+
+def read_false():
+    """"""
+    for i in range(5):
+        next_char()
+    ignore_char()
     return False
 
 
-def detect_type(object_json):
+def read_null():
+    """"""
+    for i in range(4):
+        next_char()
+    ignore_char()
+    return None
+
+
+def do_for_type(first_charachter):
     """"""
     types = {
-        r"{.*}": dict,
-        r"\[.*\]": list,
-        r"\".*\"": str,
-        r"[+-]?[0-9]+": int,
-        r"[+-]?[0-9]+[.]{1}[0-9]*": float,
-        r"true|false": bool
+        "{": "read_object()",
+        "[": "read_array()",
+        '"': "read_string()",
+        "t": "read_true()",
+        "f": "read_false()",
+        "n": "read_null()"
 
     }
-    for regex in types.keys():
-        if re.search(regex, object_json):
-            return types[regex]
+    if first_charachter in types:
+        object_py = eval(types[first_charachter])
+        return object_py
+    else:
+        object_py = eval(read_number())
+        if isinstance(object_py, int) or isinstance(object_py, float):
+            return object_py
+        else:
+            raise ValueError
 
 
 def json_to_object(object_json):
     """"""
-    types = {
-        dict: "object_to_dict(object_json)",
-        list: "array_to_list(object_json)",
+    global char, string_json
+    string_json = object_json
+    char = 0
 
-        str: "object_json[1:-1]",
-        int: "int(object_json)",
-        float: "float(object_json)",
-        bool: "true_or_false(object_json)"
-
-    }
-    if object_json == "null":
-        return None
-
-    object_type = detect_type(object_json)
-    # print(object_type, object_json)
-    if object_type in types:
-        object_json = eval(types[object_type])
-        return object_json
-    else:
-        raise ValueError
+    return do_for_type(string_json[0])
 
 
 def task(object_json):
@@ -223,7 +160,11 @@ def task(object_json):
 
 
 if __name__ == "__main__":
-    test_json = '{ "name": {"John" : [3, 4], {"Dan" : 4}}, "age": 5, "city": "New-York", "f": true, "t": null, "key": { "name": {"John" : [3, 4], {"Dan" : 4}}, "age": 5, "city": "New-York", "f": true, "t": null} }'
+
+    test_json = '{ "name": {"J[]{}{ohn" : [3, 4]}, "age": 5, "city": ' \
+                '"New-York", "f": true, "t": null, "key": { "name": ' \
+                '{"John" : [3, 4]}, "age": 5, "city": "New-York", "f": ' \
+                'true, "t": null} }'
     another_test = '{ "glossary": ' \
                    '{ "title": "example-glossary", ' \
                    '"GlossDiv": { "title": "S", "GlossList": ' \
@@ -236,12 +177,8 @@ if __name__ == "__main__":
                    '"markup" } } } } }'
 
     # Tests and comparison
-    # print(task(test_json))
-    # print(json.loads(test_json))
-
-    # print(task('[1, 2, ["da", [1, 2], [1, 2], 1], 1, [true, false], [true, false]]'))
-    # print(json.loads(another_test))
-    #
-    test_json='{"":1}'
     print(json.loads(test_json))
-    print(split_to_array(test_json))
+    print(task(test_json))
+
+    print(json.loads(another_test))
+    print(task(another_test))
